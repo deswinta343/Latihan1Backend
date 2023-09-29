@@ -12,25 +12,55 @@ class ProductController extends BaseController{
     {
         $this->product = new ProductModel();
     }
-    public function readProducts(){
-        $products =  $this->product->findAll();
-
-        $data= [
-            'products' => $products
-        ];
-
-        return view('product',  $data);
-    }
-    public function insertProductORM()
+    public function insertProduct()
     {
         $data = [
-            'nama_product' => 'Laptop',
-            'description' => 'Laptop ini bermerk asus'
+            'nama_product' => $this->request->getPost('nama_product'),
+            'description' => $this->request->getPost('description')
 
         ];
 
         $this->product->insertProductORM($data);
+        return redirect()->to('products');
     }
+
+    public function insertPage(){
+        return view('insertproduct');
+    }
+    public function readProducts(){
+        $products =  $this->product->findAll();
+
+        $data= [
+            'data' => $products
+        ];
+
+        return view('product',  $data);
+    }
+
+    public function getProduct($id){
+        $product = $this->product->where('id', $id)->first();
+        $data = [
+            'product' => $product
+        ];
+        return view('edit_product', $data);
+    }
+    public function updateProduct($id){
+        $nama_product = $this->request->getVar('nama_product');
+        $description = $this->request->getVar('description');
+        $data = [
+            'nama_product' => $nama_product,
+            'description_product' => $description
+        ];
+        $this->product->update($id, $data);
+        return redirect()->to(base_url('products'));
+    }
+
+    public function deleteProduct($id){
+        $this->product->delete($id);
+        return redirect()->to(base_url('products'));
+    }
+
+    
 
 }
 
